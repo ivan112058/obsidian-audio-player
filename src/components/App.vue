@@ -268,12 +268,14 @@ export default defineComponent({
       const cmtLines = lines.slice(sectionInfo.lineStart + 2, sectionInfo.lineEnd + 1);
 
       const cmts = cmtLines.map((x, i) => {
-        const split = x.split(' --- ');
-        const timeStamp = secondsToNumber(split[0]);
+        const cmtParts = x.split(' --- ');
+				const timeRegex = /(\d{2}:\d{2}:\d{2})/g;
+        const timeString = timeRegex.exec(cmtParts[0])?.at(1);
+        const timeStamp = secondsToNumber(timeString || "00:00:00");
         const cmt: AudioComment = {
           timeNumber: timeStamp,
-          timeString: split[0],
-          content: split[1],
+          timeString: timeString || "00:00:00",
+          content: cmtParts[1],
           index: i
         }
         return cmt;
