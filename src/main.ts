@@ -61,16 +61,21 @@ export default class AudioPlayer extends Plugin {
 			}
 		});
 
-		this.registerMarkdownCodeBlockProcessor(
-			"audio-player",
+		this.registerMarkdownPostProcessor(
 			(
-				source: string,
 				el: HTMLElement,
 				ctx: MarkdownPostProcessorContext
 			) => {
+			const callouts = el.findAll('.callout');
+	  
+			for (let callout of callouts) {
+				console.log(ctx);
+				const calloutContent = callout.find('.callout-content');
+				const text = calloutContent.innerText;
+				console.log(text);
+
 				// parse file name
-				const re = /\[\[(.+)\]\]/g;
-				const filename = re.exec(source)?.at(1);
+				const filename = calloutContent.find('p > a').getAttribute('href');
 				if (!filename) return;
 
 				const allowedExtensions = [
@@ -101,6 +106,6 @@ export default class AudioPlayer extends Plugin {
 					})
 				);
 			}
-		);
+		});
 	}
 }
