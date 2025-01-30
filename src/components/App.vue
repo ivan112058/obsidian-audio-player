@@ -261,6 +261,9 @@ export default defineComponent({
     },
     getComments() : Array<AudioComment> {
       const sectionInfo = this.getSectionInfo();
+      if (sectionInfo == null)
+        return [];
+      console.log(sectionInfo.text);
       const lines = sectionInfo.text.split('\n') as string[];
       const cmtLines = lines.slice(sectionInfo.lineStart + 2, sectionInfo.lineEnd);
 
