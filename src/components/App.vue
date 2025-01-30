@@ -265,7 +265,7 @@ export default defineComponent({
         return [];
       console.log(sectionInfo.text);
       const lines = sectionInfo.text.split('\n') as string[];
-      const cmtLines = lines.slice(sectionInfo.lineStart + 2, sectionInfo.lineEnd);
+      const cmtLines = lines.slice(sectionInfo.lineStart + 2, sectionInfo.lineEnd + 1);
 
       const cmts = cmtLines.map((x, i) => {
         const split = x.split(' --- ');
