@@ -25,6 +25,13 @@ In your note, create a [callout](https://help.obsidian.md/Editing+and+formatting
 
 The audio file must be supplied as an internal link. The link must be on the first line of the callout text.
 
+The (optional) callout title will be displayed at the top of the player widget:
+
+```
+> [!audio-player] Song Title
+> [[my_audio_file.mp3]]
+```
+
 ### Two simple Commands
 
 Commands are accessible through the command menu (Ctrl-P):
