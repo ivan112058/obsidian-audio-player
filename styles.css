@@ -129,8 +129,8 @@ If your plugin does not need CSS, delete this file.
 	min-height: 20px;
 	transition: all 0.2s;
 	display: grid;
-	grid-template-columns: 62px 1fr 16px;
-	gap: 35px;
+	grid-template-columns: 80px 1fr;
+	gap: 15px;
 	padding-right: 4px;
 	cursor: pointer;
 }
