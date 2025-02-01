@@ -46,6 +46,7 @@ If your plugin does not need CSS, delete this file.
 	background-color: var(--color-base-50);
 	border-left: 1px solid var(--color-base-10);
 	transition: all 0.2s;
+	cursor: pointer;
 }
 
 .wv:hover {
@@ -71,6 +72,7 @@ If your plugin does not need CSS, delete this file.
 	max-width: 40px;
 	opacity: 0.8;
 	transition: all 0.15s;
+	cursor: pointer;
 }
 .playpause:hover {
 	opacity: 1;
@@ -122,6 +124,7 @@ If your plugin does not need CSS, delete this file.
 	grid-template-columns: 62px 1fr 16px;
 	gap: 10px;
 	padding-right: 4px;
+	cursor: pointer;
 }
 
 .comment:hover {
