@@ -32,6 +32,11 @@ If your plugin does not need CSS, delete this file.
 .my-audio {
 	display: none;
 }
+
+.player-title {
+	margin-left: 5px;
+}
+
 .waveform {
 	width: 100%;
 	margin-top: 10px;
@@ -93,7 +98,8 @@ If your plugin does not need CSS, delete this file.
 	flex-direction: column;
 }
 .vert:first-of-type {
-	margin-right: 10px;
+	margin-right: 6px;
+	margin-top: 12px;
 }
 .horiz {
 	display: flex;
