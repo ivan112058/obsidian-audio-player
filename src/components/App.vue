@@ -1,5 +1,5 @@
 <template>
-  <div class="audio-player-ui" tabindex="0">
+  <div class="audio-player-ui" tabindex="0" v-on:click.prevent>
     <div class="horiz">
       <div v-show="!smallSize" class="vert">
         <div class="playpause" @click="togglePlay" ref="playpause">
