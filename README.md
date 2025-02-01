@@ -1,74 +1,70 @@
 # Obsidian Audio Player
 
-- one audio instance for the whole obsidian vault
-- easy to initialize
-- wave visualizer 
-- keeps playing even if you've closed the tab
-- add bookmarks to your audio files
+This is a fork of [noonesimg/obsidian-audio-player](https://github.com/noonesimg/obsidian-audio-player).
+
+## Features
+
+- One audio instance for the whole Obsidian vault
+- Easy to initialize as a callout block
+- Wave visualizer 
+- Keeps playing even if you've closed the tab
+- Add bookmarks with formatted comments to your audio files
 
 ## Demo
-![add_audio](https://user-images.githubusercontent.com/117757392/201384119-fa94f5bc-dc8f-4e03-8822-0f8948aa52dd.gif)
+
+_TODO demo gif_
 
 ## How to use
-~~~
-```audio-player
-[[my awesome audio file.mp3]]
+
+In your note, create a [callout](https://help.obsidian.md/Editing+and+formatting/Callouts) of type `audio-player`:
+
 ```
-~~~
-just add this to any of your md files
+> [!audio-player]
+> [[my_audio_file.mp3]]
+```
+
+The audio file must be supplied as an internal link. The link must be on the first line of the callout text.
 
 ### Two simple Commands
-accessable through command menu (Ctrl-P)
+
+Commands are accessible through the command menu (Ctrl-P):
 
 1. **Pause Audio** to pause whatever audio is playing
 2. **Resume Audio** to resume 
 
-### Add bookmarks through ui
-![add_bookmark](https://user-images.githubusercontent.com/117757392/201384274-14831e0b-458e-4a01-9869-34f34ad628cc.gif)
+### Add bookmarks through UI
 
-1. Double click on any of the bars on the wave visualizer, 
-2. Type your text
-3. Hit enter or press the "Add" button
-4. Click on any bookmark timecode to set the playhead position
+_TODO demo gif_
 
 ### Add bookmarks through text
-~~~
-```audio-player
-[[my awesome audio file.mp3]]
-00:00:44 --- chapter
-00:01:50 --- chapter 2 
-00:02:40 --- chapter 3 in which nothing happened
-```
-~~~
-![image](https://user-images.githubusercontent.com/117757392/201384550-33aa7f25-cadc-4ce5-a846-24d87bd7a05d.png)
 
+Note that bookmark entries must be separated by 2 newlines.
+
+```
+> [!audio-player]
+> [[my_audio_file.mp3]]
+>
+> 00:00:44 --- bookmark comment 1
+>
+> 00:01:50 --- bookmark comment 2 with _Markdown_ **support**
+>
+> 00:02:40 --- bookmark comment 3 with internal links [[MyNote]]
+```
+
+_TODO demo gif_
 
 ## How to install
-
-### From Obsidian
-
-1. Open Settings > Thrid-party plugin
-2. Make sure Safe mode is off
-3. Click Browse community plugins
-4. Search Audio Player
-5. Click install
-6. Close community plugin browser and activate the plugin
 
 ### Using Git
 
 1. Close obsidian
 2. Go to your vault .obsidian/plugins folder in the terminal
-3. git clone https://github.com/noonesimg/obsidian-audio-player.git
+3. git clone https://github.com/catetrai/obsidian-audio-player.git
 4. Open obsidian
 5. Go to settings -> community plugins
 6. Scroll down, find "Audio Player" plugin and enable it
 
 
-## Pricing
-The plugin is free, athough if you wanna say thanks, feel free to buy me a coffee
+## Credits
 
-[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="BuyMeACoffee" width="100">](https://www.buymeacoffee.com/noonesimg)
-
-
-## Notes 
-If there're any bugs or instabilities, don't hesitate to open an issue 
+This is a fork of https://github.com/noonesimg/obsidian-audio-player
