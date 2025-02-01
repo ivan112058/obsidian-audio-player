@@ -5,12 +5,6 @@
       <div v-show="!smallSize" class="vert">
         <div class="playpause" @click="togglePlay" ref="playpause">
         </div>
-        <div class="playpause seconds" @click="setPlayheadSecs(currentTime+5)" ref="add5">
-          +5s
-        </div>
-        <div class="playpause seconds" @click="setPlayheadSecs(currentTime-5)" ref="min5">
-          -5s
-        </div>
       </div>
       <div class="vert wide">
         <div class="waveform">
@@ -41,13 +35,6 @@
       <div class="playpause seconds" @click="setPlayheadSecs(currentTime+5)" ref="add5">
         +5s
       </div>
-    </div>
-    <div v-if="showInput" class="comment-input">
-      <input v-model="newComment" 
-        @keydown.escape="showInput = false; newComment = ''" type="text" ref="commentInput"
-        @keydown.enter="addComment">
-      <button @click="addComment">Add</button>
-      <button @click="showInput = false; newComment = ''">Cancel</button>
     </div>
     <div class="comment-list">
       <AudioCommentVue v-for="cmt in commentsSorted" v-bind:class="{'active-comment': cmt == activeComment }"
