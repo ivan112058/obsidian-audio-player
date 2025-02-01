@@ -1,7 +1,7 @@
 <template>
   <div class="comment" @click="emitMovePlayhead">
     <span class="timestamp">{{ cmt?.timeString }}</span>
-    <span class="content">{{ cmt?.content }}</span>
+    <span class="content" v-html="cmt?.content"></span>
   </div>
   
 </template>

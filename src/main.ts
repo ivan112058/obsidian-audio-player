@@ -69,7 +69,6 @@ export default class AudioPlayer extends Plugin {
 			const callouts = el.findAll('.callout');
 	  
 			for (let callout of callouts) {
-				console.log(ctx);
 				const calloutContent = callout.find('.callout-content');
 				const text = calloutContent.innerText;
 				console.log(text);
@@ -101,6 +100,7 @@ export default class AudioPlayer extends Plugin {
 				ctx.addChild(
 					new AudioPlayerRenderer(el, {
 						filepath: link.path,
+						calloutContent: calloutContent,
 						ctx,
 						player,
 					})

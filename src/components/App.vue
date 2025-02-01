@@ -72,6 +72,7 @@ export default defineComponent({
   props: {
     filepath: String,
     ctx: Object as PropType<MarkdownPostProcessorContext>,
+    calloutContents: Object as PropType<HTMLElement>,
     mdElement: Object as PropType<HTMLElement>,
     audio: Object as PropType<HTMLAudioElement>
   },
@@ -260,27 +261,29 @@ export default defineComponent({
       window.app.vault.adapter.write(this.ctx.sourcePath, lines.join('\n'))
     },
     getComments() : Array<AudioComment> {
-      const sectionInfo = this.getSectionInfo();
-      if (sectionInfo == null)
-        return [];
-      console.log(sectionInfo.text);
-      const lines = sectionInfo.text.split('\n') as string[];
-      const cmtLines = lines.slice(sectionInfo.lineStart + 2, sectionInfo.lineEnd + 1);
+      const cmtElems = Array.from(this.calloutContents.children);
 
-      const cmts = cmtLines.map((x, i) => {
-        const cmtParts = x.split(' --- ');
-				const timeRegex = /(\d{2}:\d{2}:\d{2})/g;
-        const timeString = timeRegex.exec(cmtParts[0])?.at(1);
-        const timeStamp = secondsToNumber(timeString || "00:00:00");
-        const cmt: AudioComment = {
-          timeNumber: timeStamp,
-          timeString: timeString || "00:00:00",
-          content: cmtParts[1],
-          index: i
+      // parse comments into time stamp and comment text
+      const timeStampSeparator = ' --- '
+      const cmts = cmtElems.map((x: HTMLElement, i) => {
+        const cmtParts = x.innerText.split(timeStampSeparator);
+        if (cmtParts.length == 2) {
+          const timeRegex = /(\d{2}:\d{2}:\d{2})/g;
+          const timeString = timeRegex.exec(cmtParts[0])?.at(1);
+          if (timeString) {
+            const timeStamp = secondsToNumber(timeString);
+            const content = x.innerHTML.replace(timeString + timeStampSeparator, '');
+            const cmt: AudioComment = {
+              timeNumber: timeStamp,
+              timeString: timeString,
+              content: content,
+              index: i
+            }
+            return cmt;
+          }
         }
-        return cmt;
       });
-      return cmts;
+      return cmts.filter(Boolean) as Array<AudioComment>;
     },
   },
   created() { 
