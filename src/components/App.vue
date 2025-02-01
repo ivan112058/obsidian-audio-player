@@ -12,7 +12,7 @@
             v-bind:class="{'played': i <= currentBar }"
             @mousedown="barMouseDownHandler(i)"
             :style="{
-              height: s * 100 + 'px'
+              height: s * 50 + 'px'
             }">
           </div>
         </div>
@@ -72,7 +72,7 @@ export default defineComponent({
       srcPath: '',
 
       filteredData: [] as number[],
-      nSamples: 150,
+      nSamples: 100,
       duration: 0,
       currentTime: 0,
       playing: false,
