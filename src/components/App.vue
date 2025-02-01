@@ -1,5 +1,6 @@
 <template>
   <div class="audio-player-ui" tabindex="0" v-on:click.prevent>
+    <div class="player-title">{{ displayTitle }}</div>
     <div class="horiz">
       <div v-show="!smallSize" class="vert">
         <div class="playpause" @click="togglePlay" ref="playpause">
@@ -72,7 +73,8 @@ export default defineComponent({
   props: {
     filepath: String,
     ctx: Object as PropType<MarkdownPostProcessorContext>,
-    calloutContents: Object as PropType<HTMLElement>,
+    title: String,
+    content: Object as PropType<HTMLElement>,
     mdElement: Object as PropType<HTMLElement>,
     audio: Object as PropType<HTMLAudioElement>
   },
@@ -101,6 +103,7 @@ export default defineComponent({
     }
   },
   computed: {
+    displayTitle() { return this.title; },
     displayedCurrentTime() { return secondsToString(this.currentTime); },
     displayedDuration() { return secondsToString(this.duration); },
     currentBar() { return Math.floor(this.currentTime / this.duration * this.nSamples); },
@@ -261,7 +264,7 @@ export default defineComponent({
       window.app.vault.adapter.write(this.ctx.sourcePath, lines.join('\n'))
     },
     getComments() : Array<AudioComment> {
-      const cmtElems = Array.from(this.calloutContents.children);
+      const cmtElems = Array.from(this.content.children);
 
       // parse comments into time stamp and comment text
       const timeStampSeparator = ' --- '

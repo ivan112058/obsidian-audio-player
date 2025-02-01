@@ -69,9 +69,11 @@ export default class AudioPlayer extends Plugin {
 			const callouts = el.findAll('.callout[data-callout="audio-player"]');
 	  
 			for (let callout of callouts) {
+				// parse title and content
+				let calloutTitle = callout.find('.callout-title').innerText;
+				if (!calloutTitle || calloutTitle == 'Audio player')
+					calloutTitle = '';
 				const calloutContent = callout.find('.callout-content');
-				const text = calloutContent.innerText;
-				console.log(text);
 
 				// parse file name
 				const filename = calloutContent.find('p > a').getAttribute('href');
@@ -100,7 +102,8 @@ export default class AudioPlayer extends Plugin {
 				ctx.addChild(
 					new AudioPlayerRenderer(el, {
 						filepath: link.path,
-						calloutContent: calloutContent,
+						title: calloutTitle,
+						content: calloutContent,
 						ctx,
 						player,
 					})

@@ -11,5 +11,6 @@ export type AudioPlayerRendererOptions = {
 	ctx: MarkdownPostProcessorContext;
 	player: HTMLAudioElement;
 	filepath: string;
-	calloutContent: HTMLElement;
+	title: string;
+	content: HTMLElement;
 };
