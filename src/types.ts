@@ -2,7 +2,8 @@ import { MarkdownPostProcessorContext } from "obsidian";
 
 export type AudioComment = {
 	content: string;
-	timeNumber: number;
+	timeStart: number;
+	timeEnd: number;
 	timeString: string;
 	index: number;
 };

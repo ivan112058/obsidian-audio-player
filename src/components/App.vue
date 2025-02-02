@@ -94,7 +94,7 @@ export default defineComponent({
     displayedCurrentTime() { return secondsToString(Math.min(this.currentTime, this.duration)); },
     displayedDuration() { return secondsToString(this.duration); },
     currentBar() { return Math.floor(this.currentTime / this.duration * this.nSamples); },
-    commentsSorted() { return this.comments.sort((x: AudioComment, y:AudioComment) => x.timeNumber - y.timeNumber); },
+    commentsSorted() { return this.comments.sort((x: AudioComment, y:AudioComment) => x.timeStart - y.timeStart); },
   },
   methods: {
     getSectionInfo() { return this.ctx.getSectionInfo(this.mdElement); },
@@ -218,13 +218,13 @@ export default defineComponent({
       if (this.isCurrent()) {
         this.currentTime = this.audio?.currentTime;
 
-        const nextCommencts = this.commentsSorted.filter((x: AudioComment) => this.audio?.currentTime >= x.timeNumber);
+        const nextComments = this.commentsSorted.filter((x: AudioComment) => this.audio?.currentTime >= x.timeStart);
         
-        if (nextCommencts.length == 1) {
-          this.activeComment = nextCommencts[0];
+        if (nextComments.length == 1) {
+          this.activeComment = nextComments[0];
         }
-        if (nextCommencts.length > 1) {
-          this.activeComment = nextCommencts[nextCommencts.length - 1];
+        if (nextComments.length > 1) {
+          this.activeComment = nextComments[nextComments.length - 1];
         }
       }
 
@@ -253,17 +253,25 @@ export default defineComponent({
     getComments() : Array<AudioComment> {
       const cmtElems = Array.from(this.content.children);
 
-      // parse comments into time stamp and comment text
+      // parse comments into timestamp/window and comment text
       const timeStampSeparator = ' --- '
       const cmts = cmtElems.map((x: HTMLElement, i) => {
         const cmtParts = x.innerText.split(timeStampSeparator);
         if (cmtParts.length == 2) {
           const timeString = cmtParts[0];
-          const timeStamp = secondsToNumber(timeString);
-          if (!isNaN(timeStamp)) {
+          const timeWindow = timeString.split('-');
+          const timeStartStr = timeWindow[0];
+          let timeEndStr = timeStartStr;
+          if (timeWindow.length == 2) {
+            const timeEndStr = timeWindow[1];
+          }
+          const timeStart = secondsToNumber(timeStartStr);
+          const timeEnd = secondsToNumber(timeEndStr);
+          if (!isNaN(timeStart) && !isNaN(timeEnd)) {
             const content = x.innerHTML.replace(timeString + timeStampSeparator, '');
             const cmt: AudioComment = {
-              timeNumber: timeStamp,
+              timeStart: timeStart,
+              timeEnd: timeEnd,
               timeString: timeString,
               content: content,
               index: i
