@@ -91,7 +91,7 @@ export default defineComponent({
   },
   computed: {
     displayTitle() { return this.title; },
-    displayedCurrentTime() { return secondsToString(this.currentTime); },
+    displayedCurrentTime() { return secondsToString(Math.min(this.currentTime, this.duration)); },
     displayedDuration() { return secondsToString(this.duration); },
     currentBar() { return Math.floor(this.currentTime / this.duration * this.nSamples); },
     commentsSorted() { return this.comments.sort((x: AudioComment, y:AudioComment) => x.timeNumber - y.timeNumber); },
@@ -203,7 +203,7 @@ export default defineComponent({
       this.audio.addEventListener('timeupdate', this.timeUpdateHandler);
       this.audio?.play();
       this.playing = true;
-      this.setBtnIcon('pause');      
+      this.setBtnIcon('pause');    
     },
     pause() {
       this.audio?.pause();
@@ -258,10 +258,9 @@ export default defineComponent({
       const cmts = cmtElems.map((x: HTMLElement, i) => {
         const cmtParts = x.innerText.split(timeStampSeparator);
         if (cmtParts.length == 2) {
-          const timeRegex = /(\d{2}:\d{2}:\d{2})/g;
-          const timeString = timeRegex.exec(cmtParts[0])?.at(1);
-          if (timeString) {
-            const timeStamp = secondsToNumber(timeString);
+          const timeString = cmtParts[0];
+          const timeStamp = secondsToNumber(timeString);
+          if (!isNaN(timeStamp)) {
             const content = x.innerHTML.replace(timeString + timeStampSeparator, '');
             const cmt: AudioComment = {
               timeNumber: timeStamp,
