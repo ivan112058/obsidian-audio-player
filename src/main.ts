@@ -37,6 +37,22 @@ export default class AudioPlayer extends Plugin {
 		});
 
 		this.addCommand({
+			id: "toggle-audio",
+			name: "Toggle Audio",
+			callback: () => {
+				if (player.src && player.paused) {
+					const ev = new Event("allresume");
+					document.dispatchEvent(ev);
+					player.play();	
+				} else {
+					const ev = new Event("allpause");
+					document.dispatchEvent(ev);
+					player.pause();
+				}
+			},
+		});
+
+		this.addCommand({
 			id: "add-audio-comment",
 			name: "Add bookmark",
 			callback: () => {

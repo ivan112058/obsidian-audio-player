@@ -32,12 +32,13 @@ The (optional) callout title will be displayed at the top of the player widget:
 > [[my_audio_file.mp3]]
 ```
 
-### Two simple Commands
+### Commands
 
-Commands are accessible through the command menu (Ctrl-P):
+Commands are accessible through the command palette menu (Ctrl-P):
 
 1. **Pause Audio** to pause whatever audio is playing
-2. **Resume Audio** to resume 
+2. **Resume Audio** to resume
+3. **Toggle Audio** to switch between pause and resume
 
 ### Add bookmarks through UI
 
