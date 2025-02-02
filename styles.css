@@ -118,6 +118,14 @@ If your plugin does not need CSS, delete this file.
 	width: 100%;
 }
 
+.timeline > .current-time {
+	cursor: pointer;
+}
+
+.timeline > .current-time:hover {
+	color: var(--text-normal);
+}
+
 .comment-list {
 	margin-top: 10px;
 	display: flex;

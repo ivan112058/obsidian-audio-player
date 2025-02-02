@@ -17,7 +17,7 @@
           </div>
         </div>
         <div class="timeline">
-          <span class="current-time">
+          <span class="current-time" @mouseover="setTimestampTooltip" @click="copyTimestampToClipboard" ref="currentTime">
             {{ displayedCurrentTime }}
           </span>
           <span class="duration">
@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { TFile, setIcon, MarkdownPostProcessorContext } from 'obsidian'
+import { TFile, setIcon, setTooltip, MarkdownPostProcessorContext } from 'obsidian'
 import { defineComponent, PropType } from 'vue';
 import { AudioComment } from '../types'
 import { secondsToString, secondsToNumber } from '../utils'
@@ -274,7 +274,16 @@ export default defineComponent({
       });
       return cmts.filter(Boolean) as Array<AudioComment>;
     },
+
+    copyTimestampToClipboard() {
+      navigator.clipboard.writeText(this.displayedCurrentTime);
+    },
+    setTimestampTooltip() {
+      const elem = this.$refs.currentTime;
+      setTooltip(elem, "Copy timestamp", {'delay': 150});
+    },
   },
+
   created() { 
     this.loadFile();
   },
