@@ -60,6 +60,16 @@ export default class AudioPlayer extends Plugin {
 				document.dispatchEvent(ev);
 			}
 		});
+		
+		this.addCommand({
+			id: "copy-timestamp",
+			name: "Copy current timestamp to clipboard",
+			callback: () => {
+				const ev = new Event("copytimestamp");
+				document.dispatchEvent(ev);
+				new Notice("Copied current timestamp to clipboard");
+			}
+		});
 
 		this.addCommand({
 			id: "audio-forward-5s",

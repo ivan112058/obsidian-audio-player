@@ -34,11 +34,12 @@ The (optional) callout title will be displayed at the top of the player widget:
 
 ### Commands
 
-Commands are accessible through the command palette menu (Ctrl-P):
+The following commands are accessible through the command palette menu (Ctrl-P):
 
 1. **Pause Audio** to pause whatever audio is playing
 2. **Resume Audio** to resume
 3. **Toggle Audio** to switch between pause and resume
+4. **Copy current timestamp to clipboard**
 
 ### Add bookmarks through UI
 

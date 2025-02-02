@@ -304,6 +304,10 @@ export default defineComponent({
       if (this.isCurrent()) 
         this.showCommentInput();
     })
+    document.addEventListener('copytimestamp', () => {
+      if (this.isCurrent()) 
+        this.copyTimestampToClipboard();
+    })
 
     this.audio.addEventListener('ended', () => {
       if (this.audio.src === this.srcPath)
