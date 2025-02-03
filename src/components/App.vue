@@ -219,13 +219,13 @@ export default defineComponent({
       if (this.isCurrent()) {
         this.currentTime = this.audio?.currentTime;
 
-        const nextComments = this.commentsSorted.filter((x: AudioComment) => this.audio?.currentTime >= x.timeStart);
-        
-        if (nextComments.length == 1) {
-          this.activeComment = nextComments[0];
-        }
-        if (nextComments.length > 1) {
-          this.activeComment = nextComments[nextComments.length - 1];
+        const currentComments = this.commentsSorted.filter((x: AudioComment) =>
+          this.audio?.currentTime >= x.timeStart && this.audio?.currentTime <= x.timeEnd
+        );
+        if (currentComments.length >= 1) {
+          this.activeComment = currentComments[currentComments.length - 1];
+        } else {
+          this.activeComment = null;
         }
       }
 
