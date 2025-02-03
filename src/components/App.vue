@@ -8,8 +8,9 @@
       </div>
       <div class="vert wide">
         <div class="waveform">
-          <div class="wv" v-for="(s, i) in filteredData" :key="srcPath+i"
+          <div class="wv" ref="wv" v-for="(s, i) in filteredData" :key="srcPath+i"
             v-bind:class="{'played': i <= currentBar }"
+            @mouseover="setWvTimestampTooltip(i)"
             @mousedown="barMouseDownHandler(i)"
             :style="{
               height: s * 50 + 'px'
@@ -17,7 +18,7 @@
           </div>
         </div>
         <div class="timeline">
-          <span class="current-time" @mouseover="setTimestampTooltip" @click="copyTimestampToClipboard" ref="currentTime">
+          <span class="current-time" @mouseover="setCopyTimestampTooltip" @click="copyTimestampToClipboard" ref="currentTime">
             {{ displayedCurrentTime }}
           </span>
           <span class="duration">
@@ -286,10 +287,15 @@ export default defineComponent({
     copyTimestampToClipboard() {
       navigator.clipboard.writeText(this.displayedCurrentTime);
     },
-    setTimestampTooltip() {
+    setCopyTimestampTooltip() {
       const elem = this.$refs.currentTime;
       setTooltip(elem, "Copy timestamp", {'delay': 150});
     },
+    setWvTimestampTooltip(i: number) {
+      const elem = this.$refs.wv[i];
+      const time = i / this.nSamples * this.duration;
+      setTooltip(elem, secondsToString(time), {'delay': 150, 'placement': 'top'});
+    }
   },
 
   created() { 
