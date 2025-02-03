@@ -262,12 +262,14 @@ export default defineComponent({
           const timeString = cmtParts[0];
           const timeWindow = timeString.split('-');
           const timeStartStr = timeWindow[0];
-          let timeEndStr = timeStartStr;
-          if (timeWindow.length == 2) {
-            const timeEndStr = timeWindow[1];
-          }
           const timeStart = secondsToNumber(timeStartStr);
-          const timeEnd = secondsToNumber(timeEndStr);
+          let timeEndStr = timeStartStr;
+          // by default, timestamps with only start time are assumed to last 1sec
+          let timeEnd = secondsToNumber(timeEndStr) + 1;
+          if (timeWindow.length == 2) {
+            timeEndStr = timeWindow[1];
+            timeEnd = secondsToNumber(timeEndStr);
+          }
           if (!isNaN(timeStart) && !isNaN(timeEnd)) {
             const content = x.innerHTML.replace(timeString + timeStampSeparator, '');
             const cmt: AudioComment = {
