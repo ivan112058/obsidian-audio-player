@@ -16,7 +16,7 @@ export default defineComponent({
   },
   methods: {
     emitMovePlayhead() {
-      this.$emit('move-playhead', this.cmt?.timeNumber);
+      this.$emit('move-playhead', this.cmt?.timeStart);
     },
     emitRemove() {
       this.$emit('remove', this.cmt.index);
