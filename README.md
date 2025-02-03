@@ -8,7 +8,7 @@ This is a fork of [noonesimg/obsidian-audio-player](https://github.com/noonesimg
 - Easy to initialize as a callout block
 - Wave visualizer 
 - Keeps playing even if you've closed the tab
-- Add bookmarks with formatted comments to your audio files
+- Add timestamp bookmarks with formatted comments to your audio files
 
 ## Demo
 
@@ -39,13 +39,11 @@ The following commands are accessible through the command palette menu (Ctrl-P):
 1. **Pause Audio** to pause whatever audio is playing
 2. **Resume Audio** to resume
 3. **Toggle Audio** to switch between pause and resume
-4. **Copy current timestamp to clipboard**
+4. **Copy current timestamp to clipboard** same as clicking on the current timestamp on the player
 
-### Add bookmarks through UI
+### Add bookmarks wih timestamps
 
-_TODO demo gif_
-
-### Add bookmarks through text
+Bookmark times can be specified either as single timestamps or as time windows with start and end time. The timestamp format is `mm:ss.SSS` (milliseconds are optional).
 
 Note that bookmark entries must be separated by 2 newlines.
 
@@ -53,11 +51,11 @@ Note that bookmark entries must be separated by 2 newlines.
 > [!audio-player]
 > [[my_audio_file.mp3]]
 >
-> 00:00:44 --- bookmark comment 1
+> 01:50.123 --- bookmark comment with _Markdown_ **formatting**
 >
-> 00:01:50 --- bookmark comment 2 with _Markdown_ **support**
+> 02:01.456-12:38 --- bookmark comment on a time window
 >
-> 00:02:40 --- bookmark comment 3 with internal links [[MyNote]]
+> 02:40 --- bookmark comment with an [[MyNote|internal link]]
 ```
 
 _TODO demo gif_
