@@ -12,7 +12,11 @@ This is a fork of the wonderful [noonesimg/obsidian-audio-player](https://github
 
 ## Demo
 
-_TODO demo gif_
+
+
+https://github.com/user-attachments/assets/623673df-67ae-4bfa-a9e3-e546273c8354
+
+
 
 ## How to use
 
