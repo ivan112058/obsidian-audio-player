@@ -3,7 +3,7 @@
 	"name": "Music Player",
 	"version": "0.0.1",
 	"minAppVersion": "0.15.0",
-	"description": "Audio player with background playback, bookmarks and wave visualiser instead of the default html5 audio",
+	"description": "Audio player with background playback, bookmarks and wave visualiser (fork of github.com/noonesimg/obsidian-audio-player)",
 	"author": "catetrai",
 	"authorUrl": "https://github.com/catetrai",
 	"isDesktopOnly": false
