@@ -121,7 +121,7 @@ export default class AudioPlayer extends Plugin {
 				// parse title (if none, use file name)
 				let calloutTitle = callout.find('.callout-title').innerText;
 				if (!calloutTitle || calloutTitle == 'Music player')
-					calloutTitle = filename;
+					calloutTitle = link.basename;
 
 				// create root $el
 				const container = el.createDiv();
