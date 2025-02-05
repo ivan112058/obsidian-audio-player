@@ -1,6 +1,6 @@
 {
-	"name": "obsidian-audio-player",
-	"version": "1.0.0",
+	"name": "music-player",
+	"version": "0.0.1",
 	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
 	"main": "main.js",
 	"scripts": {
@@ -23,6 +23,7 @@
 	},
 	"dependencies": {
 		"esbuild-plugin-vue3": "^0.3.0",
+		"obsidian-dev-utils": "^17.1.1",
 		"vue": "^3.2.41"
 	}
 }
