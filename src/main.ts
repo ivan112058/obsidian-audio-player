@@ -92,7 +92,7 @@ export default class AudioPlayer extends Plugin {
 				el: HTMLElement,
 				ctx: MarkdownPostProcessorContext
 			) => {
-			const callouts = el.findAll('.callout[data-callout="audio-player"]');
+			const callouts = el.findAll('.callout[data-callout="music-player"]');
 	  
 			for (let callout of callouts) {
 				// parse comments
