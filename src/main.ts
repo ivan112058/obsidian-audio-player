@@ -97,6 +97,7 @@ export default class AudioPlayer extends Plugin {
 			for (let callout of callouts) {
 				// parse comments
 				const calloutContent = callout.find('.callout-content');
+				const commentsList = calloutContent.find('ul');
 
 				// parse file name
 				const filename = calloutContent.find('p > a').getAttribute('href');
@@ -131,7 +132,7 @@ export default class AudioPlayer extends Plugin {
 					new AudioPlayerRenderer(el, {
 						filepath: link.path,
 						title: calloutTitle,
-						content: calloutContent,
+						content: commentsList,
 						ctx,
 						player,
 					})
