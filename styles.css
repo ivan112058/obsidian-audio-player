@@ -153,6 +153,8 @@ If your plugin does not need CSS, delete this file.
 .comment > .timestamp,
 .comment > .delete-comment {
 	color: var(--color-base-50);
+	font-size: 0.9rem;
+	margin-top: 2px;
 }
 
 .delete-comment {
