@@ -1,12 +1,14 @@
 # Obsidian Music Player
 
-This is a fork of the wonderful [noonesimg/obsidian-audio-player](https://github.com/noonesimg/obsidian-audio-player). It's tweaked to better fit the use case of annotating specifically music files (rather than long audios like podcast).
+This is a fork of the wonderful [noonesimg/obsidian-audio-player](https://github.com/noonesimg/obsidian-audio-player). It's tweaked to better fit the use case of annotating specifically music files, rather than long audios like podcasts, though it can be used for both.
 
 ## Features
 
 - Audio player with wave visualization
 - Easy to insert in your note as a custom callout block
-- Add timestamp bookmarks with formatted comments to your audio files
+- Add formatted comments to timestamps or time windows with millisecond resolution
+- Click on comment to jump to time in audio player
+- Copy current timestamp to clipboard
 - One audio instance for the whole Obsidian vault
 - Keeps playing even if you've closed the tab
 
