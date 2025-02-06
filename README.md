@@ -16,7 +16,7 @@ This is a fork of the wonderful [noonesimg/obsidian-audio-player](https://github
 
 
 
-https://github.com/user-attachments/assets/623673df-67ae-4bfa-a9e3-e546273c8354
+https://github.com/user-attachments/assets/bf520547-53c8-4c74-8ebe-ca920fc65be2
 
 
 
