@@ -72,10 +72,10 @@ Note that unlike in the original [noonesimg/obsidian-audio-player](https://githu
 ### Using the built distribution
 
 1. Quit Obsidian
-2. Go to the latest release under "Releases"
-3. Download the assets
+2. Go to the latest release under [Releases](https://github.com/catetrai/obsidian-audio-player/releases)
+3. Download the assets `main.js`, `manifest.json` and `styles.css`
 4. In your vault, under `.obsidian` create a subfolder `music-player`
-5. Unzip the assets into `music-player`
+5. Move the 3 asset files into `music-player`
 6. Open Obsidian
 7. Go to Settings -> Community Plugins
 8. Scroll down, find "Music Player" plugin and enable it
@@ -83,7 +83,7 @@ Note that unlike in the original [noonesimg/obsidian-audio-player](https://githu
 
 ### Using Git
 
-If you want to play around with the source code, install the plugin from the repository:
+If you want to play around with the source code (assuming you have a development environment set up with Node), install the plugin from the repository:
 
 1. Quit Obsidian
 2. Clone this repository into your vault's `.obsidian/plugins` directory
