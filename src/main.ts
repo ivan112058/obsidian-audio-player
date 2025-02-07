@@ -6,6 +6,7 @@ import {
 } from "obsidian";
 
 import { AudioPlayerRenderer } from "./audioPlayerRenderer";
+import { secondsToString } from "./utils";
 
 export default class AudioPlayer extends Plugin {
 	async onload() {
@@ -65,9 +66,26 @@ export default class AudioPlayer extends Plugin {
 			id: "copy-timestamp",
 			name: "Copy current timestamp to clipboard",
 			callback: () => {
-				const ev = new Event("copytimestamp");
-				document.dispatchEvent(ev);
-				new Notice("Copied current timestamp to clipboard");
+				navigator.clipboard.writeText(secondsToString(player.currentTime));
+				new Notice("Copied current timestamp");
+			}
+		});
+		
+		this.addCommand({
+			id: "toggle-and-copy-timestamp",
+			name: "Play/pause and copy current timestamp",
+			callback: () => {
+				if (player.src && player.paused) {
+					const ev = new Event("allresume");
+					document.dispatchEvent(ev);
+					player.play();	
+				} else {
+					const ev = new Event("allpause");
+					document.dispatchEvent(ev);
+					player.pause();
+					navigator.clipboard.writeText(secondsToString(player.currentTime));
+					new Notice("Copied current timestamp");
+				}
 			}
 		});
 

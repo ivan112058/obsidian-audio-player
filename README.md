@@ -47,8 +47,9 @@ The following commands are accessible through the command palette menu (`Ctrl+P`
 - **Toggle Audio**: switch between pause and resume
 - **-5 sec** / **+5 sec**: skip to 5 seconds back or forward in the audio
 - **Copy current timestamp to clipboard**: same as clicking on the current timestamp on the player
+- **Play/pause and copy current timestamp**: copies timestamp when pausing audio
 
-It's highly recommended to configure hotkeys for these commands. This will significantly speed up your workflow when writing comments while listening to the song, which involves a lot of play-pause, going backwards, and copy-pasting the current timestamp.
+It's highly recommended to configure hotkeys for these commands. This will significantly speed up your workflow when writing comments while listening to the song, which involves a lot of play-pause, going backwards to pause just at the right time, and copy-pasting the current timestamp.
 
 ### Add comments with timestamps
 
