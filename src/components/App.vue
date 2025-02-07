@@ -286,9 +286,6 @@ export default defineComponent({
       return cmts.filter(Boolean) as Array<AudioComment>;
     },
 
-    copyTimestampToClipboard() {
-      navigator.clipboard.writeText(this.displayedCurrentTime);
-    },
     setCopyTimestampTooltip() {
       const elem = this.$refs.currentTime;
       setTooltip(elem, "Copy timestamp", {'delay': 150});
@@ -320,11 +317,6 @@ export default defineComponent({
       if (this.isCurrent()) 
         this.showCommentInput();
     })
-    document.addEventListener('copytimestamp', () => {
-      if (this.isCurrent()) 
-        this.copyTimestampToClipboard();
-    })
-
     this.audio.addEventListener('ended', () => {
       if (this.audio.src === this.srcPath)
         this.setBtnIcon('play');
