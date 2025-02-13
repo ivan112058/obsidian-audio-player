@@ -252,7 +252,7 @@ export default defineComponent({
       window.app.vault.adapter.write(this.ctx.sourcePath, lines.join('\n'))
     },
     getComments() : Array<AudioComment> {
-      const cmtElems = Array.from(this.content.children);
+      const cmtElems = Array.from(this.content?.children || []);
 
       // parse comments into timestamp/window and comment text
       const timeStampSeparator = ' --- '
