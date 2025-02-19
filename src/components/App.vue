@@ -286,6 +286,9 @@ export default defineComponent({
       return cmts.filter(Boolean) as Array<AudioComment>;
     },
 
+    copyTimestampToClipboard() {
+      navigator.clipboard.writeText(this.displayedCurrentTime);
+    },
     setCopyTimestampTooltip() {
       const elem = this.$refs.currentTime;
       setTooltip(elem, "Copy timestamp", {'delay': 150});
