@@ -70,6 +70,21 @@ To grab the current timestamp to be pasted in the block, just click on the curre
 
 Note that unlike in the original [noonesimg/obsidian-audio-player](https://github.com/noonesimg/obsidian-audio-player), it is not possible to add comments via button click in the widget UI.
 
+### Display moodbar
+
+The [Moodbar](https://en.wikipedia.org/wiki/Moodbar) is a great visual aid to find at a glance the different sections of a song, nicely complementing your manual annotations. [See here an example of how to generate a moodbar](https://www.hackitu.de/pymood/).
+
+If you have a moodbar of your audio track saved as image in your vault, you can display it on the music player below the waveform. 
+
+In the callout, just add an [image embed](https://help.obsidian.md/Linking+notes+and+files/Embed+files#Embed%20an%20image%20in%20a%20note):
+
+```
+> [!music-player]
+> [[my_audio_file.mp3]]
+> ![[moodbar.png]]
+```
+
+
 ## How to install
 
 ### Manually
