@@ -9,7 +9,7 @@
       <div class="vert wide">
         <div class="waveform">
           <div class="wv" ref="wv" v-for="(s, i) in filteredData" :key="srcPath+i"
-            v-bind:class="{'played': i <= currentBar }"
+            v-bind:class="{'played': i <= currentBar, 'commented': barsWithComments.includes(i)}"
             @mouseover="setWvTimestampTooltip(i)"
             @mousedown="barMouseDownHandler(i)"
             :style="{
@@ -51,7 +51,7 @@
 import { TFile, setIcon, setTooltip, MarkdownPostProcessorContext } from 'obsidian'
 import { defineComponent, PropType } from 'vue';
 import { AudioComment } from '../types'
-import { secondsToString, secondsToNumber } from '../utils'
+import { secondsToString, secondsToNumber, range } from '../utils'
 
 import AudioCommentVue from './AudioComment.vue';
 
@@ -98,7 +98,8 @@ export default defineComponent({
     displayedCurrentTime() { return secondsToString(Math.min(this.currentTime, this.duration)); },
     displayedDuration() { return secondsToString(this.duration); },
     displayedMoodbar() { return this.moodbar?.outerHTML; },
-    currentBar() { return Math.floor(this.currentTime / this.duration * this.nSamples); },
+    currentBar() { return this.barForTime(this.currentTime); },
+    barsWithComments() { return this.comments.map((c: AudioComment) => range(...c.barEdges)).flat(); },
     commentsSorted() { return this.comments.sort((x: AudioComment, y:AudioComment) => x.timeStart - y.timeStart); },
   },
   methods: {
@@ -272,7 +273,7 @@ export default defineComponent({
           const timeStartStr = timeWindow[0];
           const timeStart = secondsToNumber(timeStartStr);
           let timeEndStr = timeStartStr;
-          // by default, timestamps with only start time are assumed to last 1sec
+          // by default, timestamps with only start time are assumed to last 1s
           let timeEnd = secondsToNumber(timeEndStr) + 1;
           if (timeWindow.length == 2) {
             timeEndStr = timeWindow[1];
@@ -280,18 +281,33 @@ export default defineComponent({
           }
           if (!isNaN(timeStart) && !isNaN(timeEnd)) {
             const content = x.innerHTML.replace(timeString + timeStampSeparator, '');
+            const bars = [
+              Math.floor(timeStart / this.duration * this.nSamples),
+              Math.ceil(timeEnd / this.duration * this.nSamples)
+            ] as [number, number];
             const cmt: AudioComment = {
               timeStart: timeStart,
               timeEnd: timeEnd,
               timeString: timeString,
               content: content,
-              index: i
+              index: i,
+              barEdges: bars
             }
             return cmt;
           }
         }
       });
       return cmts.filter(Boolean) as Array<AudioComment>;
+    },
+    barForTime(t: number) { return Math.floor(t / this.duration * this.nSamples); },
+    barsForComment(cmt: AudioComment) { return range(...cmt.barEdges); },
+    commentForBar(i: number) { 
+      const barTimeStart = i / this.nSamples * this.duration;
+      const barTimeEnd = (i + 1) / this.nSamples * this.duration;
+      const cmts = this.commentsSorted.filter((c: AudioComment) =>
+        barTimeStart < c.timeStart ? barTimeEnd > c.timeStart : barTimeStart <= c.timeEnd
+      );
+      return cmts.length >= 1 ? cmts[cmts.length - 1] : null;
     },
     highlightComment(cmt: AudioComment) {
       const commentEl = this.$refs.audiocomment[cmt.index].$el;

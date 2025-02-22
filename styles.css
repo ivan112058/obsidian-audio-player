@@ -56,17 +56,22 @@ If your plugin does not need CSS, delete this file.
 	transition: all 0.2s;
 	cursor: pointer;
 }
-
-.wv:hover {
+.wv:hover, .wv.played:hover, .wv.commented:hover {
 	background-color: var(--color-accent-2);
 }
 .wv:active {
 	background-color: var(--color-base-10);
 }
-
-.played {
+.wv.played {
 	background-color: var(--color-accent-1);
 }
+.wv.played.commented {
+	background-color: var(--color-accent-2);
+}
+.wv.commented {
+	background-color: var(--color-base-60);
+}
+
 .playpause {
 	flex: 1;
 	margin: 6px;
