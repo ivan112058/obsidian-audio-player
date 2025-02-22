@@ -71,6 +71,9 @@ If your plugin does not need CSS, delete this file.
 .wv.commented {
 	background-color: var(--color-base-60);
 }
+.wv.highlighted, .wv.played.highlighted {
+	background-color: var(--color-base-100);
+}
 
 .playpause {
 	flex: 1;

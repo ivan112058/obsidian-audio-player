@@ -9,7 +9,11 @@
       <div class="vert wide">
         <div class="waveform">
           <div class="wv" ref="wv" v-for="(s, i) in filteredData" :key="srcPath+i"
-            v-bind:class="{'played': i <= currentBar, 'commented': barsWithComments.includes(i)}"
+            v-bind:class="{
+              'played': i <= currentBar,
+              'commented': barsWithComments.includes(i),
+              'highlighted': highlightedBars.includes(i)
+            }"
             @mouseover="setWvTimestampTooltip(i); highlightCommentForBar(i);"
             @mouseout="unhighlightComment();"
             @mousedown="barMouseDownHandler(i);"
@@ -43,6 +47,8 @@
       <AudioCommentVue ref="audiocomment" v-for="cmt in commentsSorted"
         v-bind:class="{'active-comment': cmt == activeComment, 'highlighted-comment': cmt == highlightedComment }"
         @move-playhead="setPlayheadSecs" @remove="removeComment"
+        @mouseover="highlightBars(barsForComment(cmt))"
+        @mouseout="unhighlightBars()"
         :cmt="cmt" :key="cmt.timeString"></AudioCommentVue>
     </div>
   </div>
@@ -90,6 +96,7 @@ export default defineComponent({
       comments: [] as AudioComment[],
       activeComment: null as AudioComment | null,
       highlightedComment: null as AudioComment | null,
+      highlightedBars: [] as number[],
 
       ro: ResizeObserver,
       smallSize: false,
@@ -327,6 +334,9 @@ export default defineComponent({
     unhighlightComment() {
       this.highlightedComment = null;
     },
+
+    highlightBars(ixs: number[]) { this.highlightedBars = ixs; },
+    unhighlightBars() { this.highlightedBars = []; },
 
     copyTimestampToClipboard() {
       navigator.clipboard.writeText(this.displayedCurrentTime);
