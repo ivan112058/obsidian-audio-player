@@ -150,7 +150,7 @@ If your plugin does not need CSS, delete this file.
 }
 
 .comment:hover {
-	background-color: var(--background-modifier-cover);
+	background-color: var(--background-modifier-active-hover)
 }
 .comment:active {
 	background-color: var(--color-base-10);
@@ -197,4 +197,8 @@ If your plugin does not need CSS, delete this file.
 }
 .active-comment > .timestamp {
 	color: var(--white);
+}
+
+.highlighted-comment {
+	background-color: var(--background-modifier-active-hover);
 }

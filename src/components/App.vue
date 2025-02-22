@@ -10,8 +10,9 @@
         <div class="waveform">
           <div class="wv" ref="wv" v-for="(s, i) in filteredData" :key="srcPath+i"
             v-bind:class="{'played': i <= currentBar, 'commented': barsWithComments.includes(i)}"
-            @mouseover="setWvTimestampTooltip(i)"
-            @mousedown="barMouseDownHandler(i)"
+            @mouseover="setWvTimestampTooltip(i); highlightCommentForBar(i);"
+            @mouseout="unhighlightComment();"
+            @mousedown="barMouseDownHandler(i);"
             :style="{
               height: s * 50 + 'px'
             }">
@@ -40,7 +41,7 @@
     </div>
     <div class="comment-list">
       <AudioCommentVue ref="audiocomment" v-for="cmt in commentsSorted"
-        v-bind:class="{'active-comment': cmt == activeComment }"
+        v-bind:class="{'active-comment': cmt == activeComment, 'highlighted-comment': cmt == highlightedComment }"
         @move-playhead="setPlayheadSecs" @remove="removeComment"
         :cmt="cmt" :key="cmt.timeString"></AudioCommentVue>
     </div>
@@ -88,6 +89,7 @@ export default defineComponent({
       newComment: '',
       comments: [] as AudioComment[],
       activeComment: null as AudioComment | null,
+      highlightedComment: null as AudioComment | null,
 
       ro: ResizeObserver,
       smallSize: false,
@@ -310,8 +312,20 @@ export default defineComponent({
       return cmts.length >= 1 ? cmts[cmts.length - 1] : null;
     },
     highlightComment(cmt: AudioComment) {
+      this.highlightedComment = cmt;
       const commentEl = this.$refs.audiocomment[cmt.index].$el;
       commentEl.scrollIntoView({ block: 'nearest', inline: 'start', behavior: 'smooth' });
+    },
+    highlightCommentForBar(i: number) {
+      const cmt = this.commentForBar(i);
+      if (cmt) {
+        this.highlightComment(cmt);
+      } else {
+        this.highlightedComment = null;
+      }
+    },
+    unhighlightComment() {
+      this.highlightedComment = null;
     },
 
     copyTimestampToClipboard() {
