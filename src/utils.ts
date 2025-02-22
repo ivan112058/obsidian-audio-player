@@ -14,5 +14,5 @@ export function secondsToNumber(stmp: string): number {
 
 export function range(a: number, b: number): number[] {
 	// Array of integers between and including a and b, with a <= b
-	return Array.from({length: b - a}, (_, i) => a + i) as number[];
+	return Array.from({length: b - a + 1}, (_, i) => a + i) as number[];
 }

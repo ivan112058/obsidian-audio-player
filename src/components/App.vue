@@ -290,10 +290,7 @@ export default defineComponent({
           }
           if (!isNaN(timeStart) && !isNaN(timeEnd)) {
             const content = x.innerHTML.replace(timeString + timeStampSeparator, '');
-            const bars = [
-              Math.floor(timeStart / this.duration * this.nSamples),
-              Math.ceil(timeEnd / this.duration * this.nSamples)
-            ] as [number, number];
+            const bars = [timeStart, timeEnd].map(t => this.barForTime(t)) as [number, number];
             const cmt: AudioComment = {
               timeStart: timeStart,
               timeEnd: timeEnd,
