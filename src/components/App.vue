@@ -22,6 +22,13 @@
             :style="{
               height: s * 50 + 'px'
             }">
+            <div class="wv-shade"
+              v-bind:class="{ 'commented' : barsWithComments.includes(i) }"
+              :style="{
+                height: (Math.max(...filteredData) - s) * 50 + 7 + 'px',
+                position: 'relative',
+                'margin-top': - ((Math.max(...filteredData) - s) * 50 + 7) + 'px'
+              }"></div>
           </div>
         </div>
         <div class="moodbar" v-html="displayedMoodbar"></div>
