@@ -113,10 +113,8 @@ export default class AudioPlayer extends Plugin {
 			const callouts = el.findAll('.callout[data-callout="music-player"]');
 	  
 			for (let callout of callouts) {
-				// parse comments
 				const calloutContent = callout.find('.callout-content');
-				const commentsList = calloutContent.find('ul');
-
+				
 				// parse file name
 				const filename = calloutContent.find('p > a').getAttribute('href');
 				if (!filename) return;
@@ -141,6 +139,12 @@ export default class AudioPlayer extends Plugin {
 				if (!calloutTitle || calloutTitle == 'Music player')
 					calloutTitle = link.basename;
 
+				// parse moodbar image (must be embedded image link)
+				const moodbar = calloutContent.find('p > span.internal-embed') || null;
+
+				// parse comments
+				const commentsList = calloutContent.find('ul');
+
 				// create root $el
 				const container = el.createDiv();
 				container.classList.add("base-container");
@@ -151,6 +155,7 @@ export default class AudioPlayer extends Plugin {
 						filepath: link.path,
 						title: calloutTitle,
 						content: commentsList,
+						moodbar: moodbar,
 						ctx,
 						player,
 					})

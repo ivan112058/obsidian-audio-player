@@ -17,6 +17,7 @@
             }">
           </div>
         </div>
+        <div class="moodbar" v-html="displayedMoodbar"></div>
         <div class="timeline">
           <span class="current-time" @mouseover="setCopyTimestampTooltip" @click="copyTimestampToClipboard" ref="currentTime">
             {{ displayedCurrentTime }}
@@ -63,6 +64,7 @@ export default defineComponent({
     ctx: Object as PropType<MarkdownPostProcessorContext>,
     title: String,
     content: Object as PropType<HTMLElement>,
+    moodbar: Object as PropType<HTMLElement>,
     mdElement: Object as PropType<HTMLElement>,
     audio: Object as PropType<HTMLAudioElement>
   },
@@ -94,6 +96,7 @@ export default defineComponent({
     displayTitle() { return this.title; },
     displayedCurrentTime() { return secondsToString(Math.min(this.currentTime, this.duration)); },
     displayedDuration() { return secondsToString(this.duration); },
+    displayedMoodbar() { return this.moodbar?.outerHTML; },
     currentBar() { return Math.floor(this.currentTime / this.duration * this.nSamples); },
     commentsSorted() { return this.comments.sort((x: AudioComment, y:AudioComment) => x.timeStart - y.timeStart); },
   },

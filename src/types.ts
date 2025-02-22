@@ -14,4 +14,5 @@ export type AudioPlayerRendererOptions = {
 	filepath: string;
 	title: string;
 	content: HTMLElement;
+	moodbar: HTMLElement;
 };
