@@ -97,7 +97,7 @@ export default defineComponent({
     displayedCurrentTime() { return secondsToString(Math.min(this.currentTime, this.duration)); },
     displayedDuration() { return secondsToString(this.duration); },
     displayedMoodbar() { return this.moodbar?.outerHTML; },
-    currentBar() { return Math.floor(this.currentTime / this.duration * this.nSamples); },
+    currentBar() { return this.barForTime(this.currentTime); },
     barsWithComments() { return this.comments.map((c: AudioComment) => range(...c.barEdges)).flat(); },
     commentsSorted() { return this.comments.sort((x: AudioComment, y:AudioComment) => x.timeStart - y.timeStart); },
   },
@@ -293,6 +293,16 @@ export default defineComponent({
         }
       });
       return cmts.filter(Boolean) as Array<AudioComment>;
+    },
+    barForTime(t: number) { return Math.floor(t / this.duration * this.nSamples); },
+    barsForComment(cmt: AudioComment) { return range(...cmt.barEdges); },
+    commentForBar(i: number) { 
+      const barTimeStart = i / this.nSamples * this.duration;
+      const barTimeEnd = (i + 1) / this.nSamples * this.duration;
+      const cmts = this.commentsSorted.filter((c: AudioComment) =>
+        barTimeStart < c.timeStart ? barTimeEnd > c.timeStart : barTimeStart <= c.timeEnd
+      );
+      return cmts.length >= 1 ? cmts[cmts.length - 1] : null;
     },
 
     copyTimestampToClipboard() {
