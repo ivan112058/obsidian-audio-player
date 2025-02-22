@@ -230,15 +230,14 @@ export default defineComponent({
           const activeComment = currentComments[currentComments.length - 1];
           if (activeComment != this.activeComment) {
             this.activeComment = activeComment;
-            const activeCommentElem = this.$refs.audiocomment[this.activeComment.index].$el;
-            activeCommentElem.scrollIntoView({ block: 'nearest', inline: 'start', behavior: 'smooth' });
+            this.highlightComment(this.activeComment);
           }
         } else {
           this.activeComment = null;
         }
       }
-
     },
+
     setBtnIcon(icon: string) { 
       setIcon(this.button, icon);
       setIcon(this.button1, icon); 
@@ -293,6 +292,10 @@ export default defineComponent({
         }
       });
       return cmts.filter(Boolean) as Array<AudioComment>;
+    },
+    highlightComment(cmt: AudioComment) {
+      const commentEl = this.$refs.audiocomment[cmt.index].$el;
+      commentEl.scrollIntoView({ block: 'nearest', inline: 'start', behavior: 'smooth' });
     },
 
     copyTimestampToClipboard() {
