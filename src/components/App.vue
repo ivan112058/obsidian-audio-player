@@ -39,7 +39,8 @@
       </div>
     </div>
     <div class="comment-list">
-      <AudioCommentVue v-for="cmt in commentsSorted" v-bind:class="{'active-comment': cmt == activeComment }"
+      <AudioCommentVue ref="audiocomment" v-for="cmt in commentsSorted"
+        v-bind:class="{'active-comment': cmt == activeComment }"
         @move-playhead="setPlayheadSecs" @remove="removeComment"
         :cmt="cmt" :key="cmt.timeString"></AudioCommentVue>
     </div>
@@ -226,7 +227,12 @@ export default defineComponent({
           this.audio?.currentTime >= x.timeStart && this.audio?.currentTime <= x.timeEnd
         );
         if (currentComments.length >= 1) {
-          this.activeComment = currentComments[currentComments.length - 1];
+          const activeComment = currentComments[currentComments.length - 1];
+          if (activeComment != this.activeComment) {
+            this.activeComment = activeComment;
+            const activeCommentElem = this.$refs.audiocomment[this.activeComment.index].$el;
+            activeCommentElem.scrollIntoView({ block: 'nearest', inline: 'start', behavior: 'smooth' });
+          }
         } else {
           this.activeComment = null;
         }
