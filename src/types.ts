@@ -6,6 +6,7 @@ export type AudioComment = {
 	timeEnd: number;
 	timeString: string;
 	index: number;
+	barEdges: [number, number];
 };
 
 export type AudioPlayerRendererOptions = {

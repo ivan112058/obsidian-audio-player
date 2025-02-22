@@ -11,3 +11,8 @@ export function secondsToNumber(stmp: string): number {
 	const nums = stmp.split(':').map((x) => Number.parseFloat(x));
 	return nums[1] + nums[0] * 60;
 }
+
+export function range(a: number, b: number): number[] {
+	// Array of integers between and including a and b, with a <= b
+	return Array.from({length: b - a}, (_, i) => a + i) as number[];
+}
