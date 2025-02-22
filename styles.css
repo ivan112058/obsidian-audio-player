@@ -56,8 +56,17 @@ If your plugin does not need CSS, delete this file.
 	transition: all 0.2s;
 	cursor: pointer;
 }
-.wv:hover, .wv.played:hover, .wv.commented:hover {
-	background-color: var(--color-accent-2);
+.wv.begin {
+	background: linear-gradient(90deg, var(--color-base-50), var(--color-base-60));
+}
+.wv.end {
+	background: linear-gradient(90deg, var(--color-base-60), var(--color-base-50));
+}
+.wv.begin.end {
+	background: linear-gradient(90deg, var(--color-base-50), var(--color-base-60) 50%, var(--color-base-50));
+}
+.wv:hover, .wv.played:hover, .wv.commented:hover, .wv.played.commented:hover {
+	background-color: var(--color-base-100);
 }
 .wv:active {
 	background-color: var(--color-base-10);

@@ -12,6 +12,8 @@
             v-bind:class="{
               'played': i <= currentBar,
               'commented': barsWithComments.includes(i),
+              'begin': startBars.includes(i),
+              'end': endBars.includes(i),
               'highlighted': highlightedBars.includes(i)
             }"
             @mouseover="setWvTimestampTooltip(i); highlightCommentForBar(i);"
@@ -108,7 +110,9 @@ export default defineComponent({
     displayedDuration() { return secondsToString(this.duration); },
     displayedMoodbar() { return this.moodbar?.outerHTML; },
     currentBar() { return this.barForTime(this.currentTime); },
-    barsWithComments() { return this.comments.map((c: AudioComment) => range(...c.barEdges)).flat(); },
+    startBars() { return this.commentsSorted.map((c: AudioComment) => c.barEdges[0]) },
+    endBars() { return this.commentsSorted.map((c: AudioComment) => c.barEdges[1]) },
+    barsWithComments() { return this.comments.map((c: AudioComment) => range(...c.barEdges)).flat().unique(); },
     commentsSorted() { return this.comments.sort((x: AudioComment, y:AudioComment) => x.timeStart - y.timeStart); },
   },
   methods: {
