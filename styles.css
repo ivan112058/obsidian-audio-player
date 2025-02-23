@@ -56,17 +56,7 @@ If your plugin does not need CSS, delete this file.
 	transition: all 0.2s;
 	cursor: pointer;
 }
-/* .wv.begin {
-	background: linear-gradient(90deg, var(--color-base-50), var(--color-base-60));
-}
-.wv.end {
-	background: linear-gradient(90deg, var(--color-base-60), var(--color-base-50));
-}
-.wv.begin.end {
-	background: linear-gradient(90deg, var(--color-base-50), var(--color-base-60) 50%, var(--color-base-50));
-} */
-.wv:hover, .wv.played:hover, .wv.commented:hover, .wv.played.commented:hover,
-.wv.begin:hover, .wv.end:hover {
+.wv:hover, .wv.played:hover, .wv.commented:hover, .wv.played.commented:hover {
 	background-color: var(--color-base-100);
 }
 .wv:active {
@@ -84,8 +74,17 @@ If your plugin does not need CSS, delete this file.
 .wv.highlighted, .wv.played.highlighted {
 	background-color: var(--color-base-100);
 }
-.wv-shade.commented {
-	background-color: var(--background-modifier-active-hover);
+.wv-shade {
+	margin-left: -1px;
+	background-color: var(--color-base-35);
+	border-top: #c5b6fc solid 1px;
+}
+.wv-shade.begin {
+	margin-left: 0px;
+}
+.wv-shade.end {
+	/* border-right: inherit; */
+	margin-right: 1px;
 }
 
 .playpause {

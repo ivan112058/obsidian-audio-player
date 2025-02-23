@@ -12,8 +12,6 @@
             v-bind:class="{
               'played': i <= currentBar,
               'commented': barsWithComments.includes(i),
-              'begin': startBars.includes(i),
-              'end': endBars.includes(i),
               'highlighted': highlightedBars.includes(i)
             }"
             @mouseover="setWvTimestampTooltip(i); highlightCommentForBar(i);"
@@ -22,12 +20,16 @@
             :style="{
               height: s * 50 + 'px'
             }">
-            <div class="wv-shade"
-              v-bind:class="{ 'commented' : barsWithComments.includes(i) }"
+            <div class="wv-shade" v-if="barsWithComments.includes(i)"
+              v-for="cmt in this.commentsForBar(i)"
+              v-bind:class="{
+                'begin': this.hasBeginSeparator(cmt, i),
+                'end': this.hasEndSeparator(cmt, i)
+              }"
               :style="{
-                height: (Math.max(...filteredData) - s) * 50 + 7 + 'px',
                 position: 'relative',
-                'margin-top': - ((Math.max(...filteredData) - s) * 50 + 7) + 'px'
+                height: getBarHighlightHeight(s, i, cmt.overlapScore, this.commentsForBar(i).length) + 'px',
+                'margin-top': getBarHighlightMarginTop(s, i, cmt.overlapScore, this.commentsForBar(i)) + 'px',
               }"></div>
           </div>
         </div>
@@ -67,7 +69,7 @@
 import { TFile, setIcon, setTooltip, MarkdownPostProcessorContext } from 'obsidian'
 import { defineComponent, PropType } from 'vue';
 import { AudioComment } from '../types'
-import { secondsToString, secondsToNumber, range } from '../utils'
+import { secondsToString, secondsToNumber, range, hasTimeOverlap } from '../utils'
 
 import AudioCommentVue from './AudioComment.vue';
 
@@ -308,22 +310,37 @@ export default defineComponent({
               timeString: timeString,
               content: content,
               index: i,
-              barEdges: bars
+              barEdges: bars,
+              overlapScore: 0 // calculated at the end
             }
             return cmt;
           }
         }
       });
-      return cmts.filter(Boolean) as Array<AudioComment>;
+      const allCmts = cmts.filter(Boolean) as Array<AudioComment>;
+      // Calculate overlaps between comment time windows
+      // (needed for rendering of wv highlights)
+      allCmts.forEach((cmt: AudioComment, i: number) => {
+        if (i > 0) {
+          const prevCmt = allCmts[i - 1];
+          if (hasTimeOverlap([cmt.timeStart, cmt.timeEnd], [prevCmt.timeStart, prevCmt.timeEnd])) {
+            cmt.overlapScore = allCmts[i - 1].overlapScore + 1;
+          }
+        }
+      });
+      return allCmts;
     },
     barForTime(t: number) { return Math.floor(t / this.duration * this.nSamples); },
     barsForComment(cmt: AudioComment) { return range(...cmt.barEdges); },
-    commentForBar(i: number) { 
+    commentsForBar(i: number) { 
       const barTimeStart = i / this.nSamples * this.duration;
       const barTimeEnd = (i + 1) / this.nSamples * this.duration;
-      const cmts = this.commentsSorted.filter((c: AudioComment) =>
-        barTimeStart < c.timeStart ? barTimeEnd > c.timeStart : barTimeStart <= c.timeEnd
+      return this.commentsSorted.filter((c: AudioComment) =>
+        hasTimeOverlap([c.timeStart, c.timeEnd], [barTimeStart, barTimeEnd])
       );
+    },
+    commentForBar(i: number) {
+      const cmts = this.commentsForBar(i);
       return cmts.length >= 1 ? cmts[cmts.length - 1] : null;
     },
     highlightComment(cmt: AudioComment) {
@@ -346,6 +363,46 @@ export default defineComponent({
     highlightBars(ixs: number[]) { this.highlightedBars = ixs; },
     unhighlightBars() { this.highlightedBars = []; },
 
+    getBarHighlightHeight(s: number, i: number, rank: number, numCmts: number) {
+      const val = (Math.max(...this.filteredData) - s)
+      const scaling = 50;
+      const padding = 7;
+      const rankScaling = 3;
+      if (rank < numCmts - 1)
+        return rankScaling;
+      return val * scaling + padding - rankScaling * rank;
+    },
+    getBarHighlightMarginTop(s: number, i: number, rank: number, cmts: AudioComment[]) {
+      const val = (Math.max(...this.filteredData) - s)
+      const scaling = 50;
+      const padding = 7;
+      const rankScaling = 3;
+      const height = this.getBarHighlightHeight(s, i, rank, cmts.length);
+      if (rank == 0 && cmts.length == 1)
+        return -height
+      if (rank == Math.min(...cmts.map(x => x.overlapScore)))
+        return -this.getBarHighlightHeight(s, i, rank, rank-1);
+      return 0;
+    },
+
+    hasBeginSeparator(cmt: AudioComment, i: number) {
+      if (i == 0) return false;
+      const areBarsAdjacent = this.startBars.includes(i) && this.endBars.includes(i - 1);
+      const prevCmt = this.commentForBar(i - 1);
+      if (!prevCmt) return false;
+      const isOverlapBegin = cmt.overlapScore > 0 &&
+        cmt.overlapScore > prevCmt.overlapScore;
+      return areBarsAdjacent || isOverlapBegin;
+    },
+    hasEndSeparator(cmt: AudioComment, i: number) {
+      if (i > this.filteredData.length - 1) return false;
+      const nextCmt = this.commentForBar(i + 1);
+      if (!nextCmt) return false;
+      const isOverlapEnd = cmt.overlapScore > 0 &&
+        cmt.overlapScore > nextCmt.overlapScore;
+      return isOverlapEnd;
+    },
+    
     copyTimestampToClipboard() {
       navigator.clipboard.writeText(this.displayedCurrentTime);
     },
