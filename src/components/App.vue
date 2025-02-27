@@ -29,7 +29,7 @@
               :style="{
                 position: 'relative',
                 height: getBarHighlightHeight(s, i, cmt.overlapScore, this.commentsForBar(i)) + 'px',
-                'margin-top': getBarHighlightMarginTop(s, i, cmt.overlapScore, this.commentsForBar(i)) + 'px',
+                'margin-top': getBarHighlightMarginTop(s, i, cmt.overlapScore, cmt, this.commentsForBar(i)) + 'px',
               }"></div>
           </div>
         </div>
@@ -327,6 +327,11 @@ export default defineComponent({
           let prevCmt = allCmts[i - 1];
           if (hasOverlap(prevCmt.barEdges, cmt.barEdges)) {
             cmt.overlapScore = prevCmt.overlapScore + 1;
+            if (cmt.overlapScore > 1 && allCmts[i - 2].overlapScore == 0 &&
+              allCmts[i - 2].barEdges[1] < cmt.barEdges[0]) {
+              // wrap and go back to the top
+              cmt.overlapScore = 0;
+            }
           }
         }
       });
@@ -377,14 +382,16 @@ export default defineComponent({
       }
       return val * scaling + padding - rankScaling * rank;
     },
-    getBarHighlightMarginTop(s: number, i: number, rank: number, cmts: Array<AudioComment>) {
+    getBarHighlightMarginTop(s: number, i: number, rank: number, cmt: AudioComment, cmts: Array<AudioComment>) {
       const val = (Math.max(...this.filteredData) - s)
       const scaling = 50;
       const padding = 7;
       const rankScaling = 3;
       const height = this.getBarHighlightHeight(s, i, rank, cmts);
       if (rank == 0 && cmts.length == 1)
-        return -height
+        return -height;
+      if (rank == Math.max(...cmts.map(x => x.overlapScore)) && rank > cmts.indexOf(cmt))
+        return -this.getBarHighlightHeight(s, i, rank, cmts.slice(0, rank));
       if (rank == Math.min(...cmts.map(x => x.overlapScore)))
         return -this.getBarHighlightHeight(s, i, rank, cmts.slice(0, -rank));
       return 0;
