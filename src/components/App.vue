@@ -28,7 +28,7 @@
               }"
               :style="{
                 position: 'relative',
-                height: getBarHighlightHeight(s, i, cmt.overlapScore, this.commentsForBar(i).length) + 'px',
+                height: getBarHighlightHeight(s, i, cmt.overlapScore, this.commentsForBar(i)) + 'px',
                 'margin-top': getBarHighlightMarginTop(s, i, cmt.overlapScore, this.commentsForBar(i)) + 'px',
               }"></div>
           </div>
@@ -69,7 +69,7 @@
 import { TFile, setIcon, setTooltip, MarkdownPostProcessorContext } from 'obsidian'
 import { defineComponent, PropType } from 'vue';
 import { AudioComment } from '../types'
-import { secondsToString, secondsToNumber, range, hasTimeOverlap } from '../utils'
+import { secondsToString, secondsToNumber, range, hasOverlap } from '../utils'
 
 import AudioCommentVue from './AudioComment.vue';
 
@@ -320,11 +320,13 @@ export default defineComponent({
       const allCmts = cmts.filter(Boolean) as Array<AudioComment>;
       // Calculate overlaps between comment time windows
       // (needed for rendering of wv highlights)
-      allCmts.forEach((cmt: AudioComment, i: number) => {
+      allCmts.sort((x: AudioComment, y:AudioComment) =>
+        x.timeStart - y.timeStart
+      ).forEach((cmt: AudioComment, i: number) => {
         if (i > 0) {
-          const prevCmt = allCmts[i - 1];
-          if (hasTimeOverlap([cmt.timeStart, cmt.timeEnd], [prevCmt.timeStart, prevCmt.timeEnd])) {
-            cmt.overlapScore = allCmts[i - 1].overlapScore + 1;
+          let prevCmt = allCmts[i - 1];
+          if (hasOverlap(prevCmt.barEdges, cmt.barEdges)) {
+            cmt.overlapScore = prevCmt.overlapScore + 1;
           }
         }
       });
@@ -336,7 +338,7 @@ export default defineComponent({
       const barTimeStart = i / this.nSamples * this.duration;
       const barTimeEnd = (i + 1) / this.nSamples * this.duration;
       return this.commentsSorted.filter((c: AudioComment) =>
-        hasTimeOverlap([c.timeStart, c.timeEnd], [barTimeStart, barTimeEnd])
+        hasOverlap([c.timeStart, c.timeEnd], [barTimeStart, barTimeEnd])
       );
     },
     commentForBar(i: number) {
@@ -363,44 +365,46 @@ export default defineComponent({
     highlightBars(ixs: number[]) { this.highlightedBars = ixs; },
     unhighlightBars() { this.highlightedBars = []; },
 
-    getBarHighlightHeight(s: number, i: number, rank: number, numCmts: number) {
+    getBarHighlightHeight(s: number, i: number, rank: number, cmts: Array<AudioComment>) {
       const val = (Math.max(...this.filteredData) - s)
       const scaling = 50;
       const padding = 7;
       const rankScaling = 3;
-      if (rank < numCmts - 1)
-        return rankScaling;
+      const maxRank = Math.max(...cmts.map(x => x.overlapScore));
+      if (rank < maxRank) {
+        const nextRank = cmts.filter(x => x.overlapScore > rank)[0].overlapScore;
+        return rankScaling * (nextRank - rank);
+      }
       return val * scaling + padding - rankScaling * rank;
     },
-    getBarHighlightMarginTop(s: number, i: number, rank: number, cmts: AudioComment[]) {
+    getBarHighlightMarginTop(s: number, i: number, rank: number, cmts: Array<AudioComment>) {
       const val = (Math.max(...this.filteredData) - s)
       const scaling = 50;
       const padding = 7;
       const rankScaling = 3;
-      const height = this.getBarHighlightHeight(s, i, rank, cmts.length);
+      const height = this.getBarHighlightHeight(s, i, rank, cmts);
       if (rank == 0 && cmts.length == 1)
         return -height
       if (rank == Math.min(...cmts.map(x => x.overlapScore)))
-        return -this.getBarHighlightHeight(s, i, rank, rank-1);
+        return -this.getBarHighlightHeight(s, i, rank, cmts.slice(0, -rank));
       return 0;
     },
 
     hasBeginSeparator(cmt: AudioComment, i: number) {
       if (i == 0) return false;
-      const areBarsAdjacent = this.startBars.includes(i) && this.endBars.includes(i - 1);
-      const prevCmt = this.commentForBar(i - 1);
-      if (!prevCmt) return false;
-      const isOverlapBegin = cmt.overlapScore > 0 &&
-        cmt.overlapScore > prevCmt.overlapScore;
+      const prevCmts = this.commentsForBar(i - 1);
+      if (!prevCmts || prevCmts.length == 0) return false;
+      const areBarsAdjacent = this.startBars.includes(i) && this.endBars.includes(i - 1) &&
+        ! prevCmts.includes(cmt);
+      const isOverlapBegin = cmt.overlapScore > 0 && cmt.overlapScore > prevCmts[prevCmts.length-1].overlapScore;
       return areBarsAdjacent || isOverlapBegin;
     },
     hasEndSeparator(cmt: AudioComment, i: number) {
       if (i > this.filteredData.length - 1) return false;
-      const nextCmt = this.commentForBar(i + 1);
-      if (!nextCmt) return false;
-      const isOverlapEnd = cmt.overlapScore > 0 &&
-        cmt.overlapScore > nextCmt.overlapScore;
-      return isOverlapEnd;
+      const nextCmts = this.commentsForBar(i + 1);
+      if (!nextCmts || nextCmts.length == 0) return false;
+      const isOverlapEnd = cmt.overlapScore > 0 && cmt.overlapScore > nextCmts[nextCmts.length-1].overlapScore;
+      return this.endBars.includes(i) && isOverlapEnd;
     },
     
     copyTimestampToClipboard() {

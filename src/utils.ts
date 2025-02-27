@@ -17,7 +17,7 @@ export function range(a: number, b: number): number[] {
 	return Array.from({length: b - a + 1}, (_, i) => a + i) as number[];
 }
 
-export function hasTimeOverlap(a: number[], b: number[]) {
-	// Calculate if two time windows [tStart, tEnd] overlap
-	return b[0] < a[0] ? b[1] > a[0] : b[0] <= a[1];
+export function hasOverlap(a: number[], b: number[]) {
+	// Calculate if two windows [tStart, tEnd] overlap
+	return b[0] < a[0] ? b[1] >= a[0] : b[0] <= a[1];
 }
