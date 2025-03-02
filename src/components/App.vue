@@ -323,15 +323,11 @@ export default defineComponent({
       allCmts.sort((x: AudioComment, y:AudioComment) =>
         x.timeStart - y.timeStart
       ).forEach((cmt: AudioComment, i: number) => {
-        if (i > 0) {
-          let prevCmt = allCmts[i - 1];
-          if (hasOverlap(prevCmt.barEdges, cmt.barEdges)) {
-            cmt.overlapScore = prevCmt.overlapScore + 1;
-            if (cmt.overlapScore > 1 && allCmts[i - 2].overlapScore == 0 &&
-              allCmts[i - 2].barEdges[1] < cmt.barEdges[0]) {
-              // wrap and go back to the top
-              cmt.overlapScore = 0;
-            }
+        if (i == 0) return;
+        const overlaps = allCmts.slice(0, i).filter(c => hasOverlap(c.barEdges, cmt.barEdges));
+        if (overlaps.length > 0) {
+          while (overlaps.filter(c => c.overlapScore == cmt.overlapScore).length != 0) {
+            cmt.overlapScore += 1;
           }
         }
       });
@@ -342,12 +338,12 @@ export default defineComponent({
     commentsForBar(i: number) { 
       const barTimeStart = i / this.nSamples * this.duration;
       const barTimeEnd = (i + 1) / this.nSamples * this.duration;
-      return this.commentsSorted.filter((c: AudioComment) =>
-        hasOverlap([c.timeStart, c.timeEnd], [barTimeStart, barTimeEnd])
-      );
+      return this.comments.filter((c: AudioComment) =>
+          hasOverlap([c.timeStart, c.timeEnd], [barTimeStart, barTimeEnd])
+        ).sort((x: AudioComment, y: AudioComment) => x.overlapScore - y.overlapScore);
     },
     commentForBar(i: number) {
-      const cmts = this.commentsForBar(i);
+      const cmts = this.commentsForBar(i).sort((x: AudioComment, y:AudioComment) => x.timeStart - y.timeStart);
       return cmts.length >= 1 ? cmts[cmts.length - 1] : null;
     },
     highlightComment(cmt: AudioComment) {
@@ -371,11 +367,12 @@ export default defineComponent({
     unhighlightBars() { this.highlightedBars = []; },
 
     getBarHighlightHeight(s: number, i: number, rank: number, cmts: Array<AudioComment>) {
+      const maxRank = Math.max(...cmts.map(x => x.overlapScore));
+      const maxRankGlobal = Math.max(...this.comments.map((x: AudioComment) => x.overlapScore));
       const val = (Math.max(...this.filteredData) - s)
       const scaling = 50;
-      const padding = 7;
       const rankScaling = 3;
-      const maxRank = Math.max(...cmts.map(x => x.overlapScore));
+      const padding = 7 + rankScaling * maxRankGlobal;
       if (rank < maxRank) {
         const nextRank = cmts.filter(x => x.overlapScore > rank)[0].overlapScore;
         return rankScaling * (nextRank - rank);
@@ -383,15 +380,9 @@ export default defineComponent({
       return val * scaling + padding - rankScaling * rank;
     },
     getBarHighlightMarginTop(s: number, i: number, rank: number, cmt: AudioComment, cmts: Array<AudioComment>) {
-      const val = (Math.max(...this.filteredData) - s)
-      const scaling = 50;
-      const padding = 7;
-      const rankScaling = 3;
       const height = this.getBarHighlightHeight(s, i, rank, cmts);
-      if (rank == 0 && cmts.length == 1)
+      if (rank == 0 && cmts.length == 1 || rank > cmts.indexOf(cmt))
         return -height;
-      if (rank == Math.max(...cmts.map(x => x.overlapScore)) && rank > cmts.indexOf(cmt))
-        return -this.getBarHighlightHeight(s, i, rank, cmts.slice(0, rank));
       if (rank == Math.min(...cmts.map(x => x.overlapScore)))
         return -this.getBarHighlightHeight(s, i, rank, cmts.slice(0, -rank));
       return 0;
@@ -403,7 +394,7 @@ export default defineComponent({
       if (!prevCmts || prevCmts.length == 0) return false;
       const areBarsAdjacent = this.startBars.includes(i) && this.endBars.includes(i - 1) &&
         ! prevCmts.includes(cmt);
-      const isOverlapBegin = cmt.overlapScore > 0 && cmt.overlapScore > prevCmts[prevCmts.length-1].overlapScore;
+      const isOverlapBegin = cmt.overlapScore > 0 && cmt.overlapScore > Math.max(...prevCmts.map((x: AudioComment) => x.overlapScore));
       return areBarsAdjacent || isOverlapBegin;
     },
     hasEndSeparator(cmt: AudioComment, i: number) {

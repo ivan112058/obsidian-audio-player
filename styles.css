@@ -36,6 +36,7 @@ If your plugin does not need CSS, delete this file.
 
 .player-title {
 	margin-left: 5px;
+	margin-bottom: 10px;
 	--font-weight: var(--callout-title-weight);
     font-weight: var(--font-weight);
 }
