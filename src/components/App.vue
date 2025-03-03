@@ -56,11 +56,21 @@
     </div>
     <div class="comment-list">
       <AudioCommentVue ref="audiocomment" v-for="cmt in commentsSorted"
-        v-bind:class="{'active-comment': cmt == activeComment, 'highlighted-comment': cmt == highlightedComment }"
+        v-bind:class="{
+          'active-comment': cmt == activeComment,
+          'current-comment': cmt == currentComment,
+          'highlighted-comment': cmt == highlightedComment
+        }"
         @move-playhead="setPlayheadSecs" @remove="removeComment"
         @mouseover="highlightBars(barsForComment(cmt))"
         @mouseout="unhighlightBars()"
         :cmt="cmt" :key="cmt.timeString"></AudioCommentVue>
+      <div class="comment"
+        v-if="commentsSorted.length > 0"
+        v-bind:class="{
+          'current-comment' : currentComment == null
+        }">
+      </div>
     </div>
   </div>
 </template>
@@ -106,6 +116,7 @@ export default defineComponent({
       newComment: '',
       comments: [] as AudioComment[],
       activeComment: null as AudioComment | null,
+      currentComment: null as AudioComment | null,
       highlightedComment: null as AudioComment | null,
       highlightedBars: [] as number[],
 
@@ -246,15 +257,32 @@ export default defineComponent({
       if (this.isCurrent()) {
         this.currentTime = this.audio?.currentTime;
 
+        // Calculate current comment (comment where the current time marker should be displayed)
+        if (this.comments.length > 0){
+          const firstComment = this.commentsSorted[0];
+          if (this.currentTime <= firstComment.timeStart) {
+            this.currentComment = firstComment;
+          } else if (this.currentTime > this.commentsSorted[this.comments.length - 1].timeStart) {
+            this.currentComment = null;  // means it's the last pseudo-comment element
+          } else {
+            const pastComments = this.commentsSorted.filter((x: AudioComment) =>
+              this.currentTime <= x.timeStart
+            );
+            this.currentComment = this.commentsSorted[pastComments[0].index];
+          }
+        }
+
+        // Calculate active comment (currently playing segment)
         const currentComments = this.commentsSorted.filter((x: AudioComment) =>
-          this.audio?.currentTime >= x.timeStart && this.audio?.currentTime <= x.timeEnd
+          this.currentTime >= x.timeStart && this.currentTime <= x.timeEnd
         );
-        if (currentComments.length >= 1) {
+        if (currentComments.length > 0) {
           const activeComment = currentComments[currentComments.length - 1];
           if (activeComment != this.activeComment) {
-            this.activeComment = activeComment;
-            this.highlightComment(this.activeComment);
+            const commentEl = this.$refs.audiocomment[activeComment.index].$el;
+            commentEl.scrollIntoView({ block: 'nearest', inline: 'start', behavior: 'smooth' });
           }
+          this.activeComment = activeComment;
         } else {
           this.activeComment = null;
         }
@@ -309,7 +337,7 @@ export default defineComponent({
               timeEnd: timeEnd,
               timeString: timeString,
               content: content,
-              index: i,
+              index: 0, // calculated at the end when sorting
               barEdges: bars,
               overlapScore: 0 // calculated at the end
             }
@@ -324,6 +352,7 @@ export default defineComponent({
         x.timeStart - y.timeStart
       ).forEach((cmt: AudioComment, i: number) => {
         if (i == 0) return;
+        cmt.index = i;
         const overlaps = allCmts.slice(0, i).filter(c => hasOverlap(c.barEdges, cmt.barEdges));
         if (overlaps.length > 0) {
           while (overlaps.filter(c => c.overlapScore == cmt.overlapScore).length != 0) {

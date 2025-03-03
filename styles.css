@@ -70,7 +70,7 @@ If your plugin does not need CSS, delete this file.
 	background-color: var(--color-accent-2);
 }
 .wv.commented {
-	background-color: var(--color-base-60);
+	background-color: #888888;
 }
 .wv.highlighted, .wv.played.highlighted {
 	background-color: var(--color-base-100);
@@ -163,10 +163,15 @@ If your plugin does not need CSS, delete this file.
 	gap: 15px;
 	padding-right: 1em;
 	cursor: pointer;
+	border-top: 1px solid transparent;
 }
 
 .comment:hover {
-	background-color: var(--background-modifier-active-hover)
+	background-color: #ffffff10;
+}
+.comment:last-child:hover {
+	background: none;
+	cursor: auto;
 }
 .comment:active {
 	background-color: var(--color-base-10);
@@ -205,16 +210,20 @@ If your plugin does not need CSS, delete this file.
 	text-overflow: ellipsis;
 }
 .comment > .timestamp:hover {
-	color: var(--color-accent-1);
-}
-
-.active-comment {
-	background-color: #ffffff10;
-}
-.active-comment > .timestamp {
 	color: var(--white);
 }
 
-.highlighted-comment {
+.active-comment, .active-comment:hover, .active-comment.highlighted-comment {
 	background-color: var(--background-modifier-active-hover);
+}
+
+.highlighted-comment {
+	background-color: #ffffff10;
+}
+
+.current-comment {
+	border-top: 1px solid var(--color-accent-2);
+}
+.active-comment + .current-comment, .current-comment.active-comment {
+	border-top: 1px solid transparent;
 }
