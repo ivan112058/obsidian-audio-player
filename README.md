@@ -14,11 +14,7 @@ This is a fork of the wonderful [noonesimg/obsidian-audio-player](https://github
 
 ## Demo
 
-
-
-https://github.com/user-attachments/assets/bf520547-53c8-4c74-8ebe-ca920fc65be2
-
-
+https://github.com/user-attachments/assets/a2645be9-a747-4e1f-9bf4-3d8dc12e6261
 
 ## How to use
 
