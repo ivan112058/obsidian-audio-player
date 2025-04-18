@@ -95,10 +95,10 @@ If your plugin does not need CSS, delete this file.
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 10px;
-	border-radius: 30px;
-	max-height: 40px;
-	max-width: 40px;
+	padding: 8px;
+	border-radius: 25px;
+	max-height: 35px;
+	max-width: 35px;
 	opacity: 0.8;
 	transition: all 0.15s;
 	cursor: pointer;
@@ -108,6 +108,33 @@ If your plugin does not need CSS, delete this file.
 }
 .playpause:active {
 	background-color: var(--color-base-10);
+}
+.playback-speed {
+  flex: 1;
+  margin: 6px;
+  background-color: var(--color-accent-1);
+  color: var(--text-normal);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px;
+  border-radius: 8px;
+  max-height: 35px;
+  max-width: 70px;
+  opacity: 0.8;
+  transition: all 0.15s;
+  cursor: pointer;
+  border: none;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.playback-speed:hover {
+  opacity: 1;
+}
+
+.playback-speed:active {
+  background-color: var(--color-base-10);
 }
 .seconds {
 	border-radius: 2;
@@ -127,6 +154,7 @@ If your plugin does not need CSS, delete this file.
 }
 .horiz {
 	display: flex;
+	align-items: center;
 }
 
 .timeline {

@@ -5,6 +5,12 @@
       <div v-show="!smallSize" class="vert">
         <div class="playpause" @click="togglePlay" ref="playpause">
         </div>
+        <!-- 添加播放速度下拉框 -->
+        <select class="playback-speed" v-model="playbackRate" @change="changePlaybackRate">
+          <option v-for="rate in playbackRates" :key="rate" :value="rate">
+            {{ rate }}x
+          </option>
+        </select>
       </div>
       <div class="vert wide">
         <div class="waveform">
@@ -122,6 +128,9 @@ export default defineComponent({
 
       ro: ResizeObserver,
       smallSize: false,
+
+      playbackRate: 1.0, // 默认播放速度
+      playbackRates: [0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0], // 可选播放速度
     }
   },
   computed: {
@@ -211,7 +220,7 @@ export default defineComponent({
       } else {
         let time = i / this.nSamples * this.duration;
         this.setPlayheadSecs(time);
-        
+        this.copyTimestampToClipboard();
       }
     },
     setPlayheadSecs(time: any) {
@@ -240,6 +249,7 @@ export default defineComponent({
         this.audio.currentTime = this.currentTime;
       }
       this.audio.addEventListener('timeupdate', this.timeUpdateHandler);
+      this.audio.playbackRate = this.playbackRate; // 设置音频播放速度
       this.audio?.play();
       this.playing = true;
       this.setBtnIcon('pause');    
@@ -310,56 +320,66 @@ export default defineComponent({
       lines.splice(sectionInfo.lineStart + 2 + i, 1);
       window.app.vault.adapter.write(this.ctx.sourcePath, lines.join('\n'))
     },
-    getComments() : Array<AudioComment> {
+    getComments(): Array<AudioComment> {
       const cmtElems = Array.from(this.content?.children || []);
-
-      // parse comments into timestamp/window and comment text
-      const timeStampSeparator = ' --- '
-      const cmts = cmtElems.map((x: HTMLElement, i) => {
+      const timeStampSeparator = ' --- ';
+    
+      // Parse comments into timestamp/window and comment text
+      const cmts = cmtElems.map((x: HTMLElement) => {
         const cmtParts = x.innerText.split(timeStampSeparator);
-        if (cmtParts.length == 2) {
+        if (cmtParts.length === 2) {
           const timeString = cmtParts[0];
           const timeWindow = timeString.split('-');
           const timeStartStr = timeWindow[0];
           const timeStart = secondsToNumber(timeStartStr);
           let timeEndStr = timeStartStr;
-          // by default, timestamps with only start time are assumed to last 1s
-          let timeEnd = secondsToNumber(timeEndStr) + 1;
-          if (timeWindow.length == 2) {
+          let timeEnd = secondsToNumber(timeEndStr) + 1; // Default to 1s duration
+    
+          if (timeWindow.length === 2) {
             timeEndStr = timeWindow[1];
             timeEnd = secondsToNumber(timeEndStr);
           }
-          if (!isNaN(timeStart) && !isNaN(timeEnd)) {
-            const content = x.innerHTML.replace(timeString + timeStampSeparator, '');
-            const bars = [timeStart, timeEnd].map(t => this.barForTime(t)) as [number, number];
-            const cmt: AudioComment = {
-              timeStart: timeStart,
-              timeEnd: timeEnd,
-              timeString: timeString,
-              content: content,
-              index: 0, // calculated at the end when sorting
-              barEdges: bars,
-              overlapScore: 0 // calculated at the end
-            }
-            return cmt;
-          }
+    
+          const content = x.innerHTML.replace(timeString + timeStampSeparator, '');
+          const bars = [timeStart, timeEnd].map(t => this.barForTime(t)) as [number, number];
+          const cmt: AudioComment = {
+            timeStart,
+            timeEnd,
+            timeString,
+            content,
+            index: 0, // Calculated later when sorting
+            barEdges: bars,
+            overlapScore: 0 // Calculated later
+          };
+          return cmt;
         }
       });
+    
       const allCmts = cmts.filter(Boolean) as Array<AudioComment>;
-      // Calculate overlaps between comment time windows
-      // (needed for rendering of wv highlights)
-      allCmts.sort((x: AudioComment, y:AudioComment) =>
-        x.timeStart - y.timeStart
-      ).forEach((cmt: AudioComment, i: number) => {
-        if (i == 0) return;
-        cmt.index = i;
-        const overlaps = allCmts.slice(0, i).filter(c => hasOverlap(c.barEdges, cmt.barEdges));
-        if (overlaps.length > 0) {
-          while (overlaps.filter(c => c.overlapScore == cmt.overlapScore).length != 0) {
-            cmt.overlapScore += 1;
-          }
+    
+      // Adjust timeEnd to the next comment's timeStart if applicable
+      allCmts.forEach((cmt, i) => {
+        if (i < allCmts.length - 1) {
+          cmt.timeEnd = allCmts[i + 1].timeStart;
+        } else {
+          // Special handling for the last comment
+          cmt.timeEnd = this.duration; // Set to the end of the audio duration
         }
       });
+    
+      // Calculate overlaps between comment time windows
+      allCmts
+        .sort((x, y) => x.timeStart - y.timeStart)
+        .forEach((cmt, i) => {
+          cmt.index = i;
+          const overlaps = allCmts.slice(0, i).filter(c => hasOverlap(c.barEdges, cmt.barEdges));
+          if (overlaps.length > 0) {
+            while (overlaps.filter(c => c.overlapScore === cmt.overlapScore).length !== 0) {
+              cmt.overlapScore += 1;
+            }
+          }
+        });
+    
       return allCmts;
     },
     barForTime(t: number) { return Math.floor(t / this.duration * this.nSamples); },
@@ -445,6 +465,9 @@ export default defineComponent({
       const elem = this.$refs.wv[i];
       const time = i / this.nSamples * this.duration;
       setTooltip(elem, secondsToString(time), {'delay': 150, 'placement': 'top'});
+    },
+    changePlaybackRate() {
+      this.audio.playbackRate = this.playbackRate; // 设置音频播放速度
     }
   },
 
